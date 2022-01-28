@@ -1,68 +1,53 @@
 let map;
-let infoWindow = new google.maps.InfoWindow();
-DJANGO_STATIC_URL = '{{ STATIC_URL }}'
-state = '{{ states }}'
-
-$(document).ready(function() {
-    let tt = $('#test')
-    $('#test').on('change', function(){
-        console.log($(this).val());
-    })
-})
-// function initMap() {
-//     map = new google.maps.Map(document.getElementById("map"), {
-//         center: { lat: 40, lng: -97 },
-//         zoom: 4,
-//         minZoom:2,
-//         maxZoom:7,
-//     });
-
-//     let markers = ['static/images/1.png']
-//     // let marker = markers[0];
-
-//     function marker(n){
-//         // if (n > 0 && n < 10) return markers[0];
-//         // else if (n > 10 && n < 100) return markers[1];
-//         // else if (n > 100 && n < 1000) return markers[2];
-//         // else if (n > 100 && n < 1000) return markers[3];
-//         // else return markers[4];
-//         return markers[0];
-//     }
-
-    
-
-//     function initMarker(n) {
-//         marker = new google.maps.Marker({
-//             position: {lat: parseFloat(world_case_detail[i]["lat"]), lng: parseFloat(world_case_detail[i]["lng"])},
-//             title: world_case_detail[i][0],
-//             icon: markers[n],
-//             map:map
-//         });
-//     }
-// }
-
 function initMap(){
     // Map options
     var options = {
-      zoom: 4,
+      zoom: 3,
       center: { lat: 39, lng: -97 },
-      minZoom: 4,
+      minZoom: 3,
       maxZoom: 7,
+    }
+
+    let covidTable = $('#covid-table tbody');
+    let rawTable = covidTable.html();
+    let tableData = rawTable.split('<td>').join('').split('</td>');
+    tableData = tableData.slice(0, tableData.length - 1);
+    let states = [];
+    for (let i = 0; i < tableData.length; i++) {
+        if (i % 5 === 0) {
+            states.push([tableData[i]]);
+        } else {
+            states[states.length - 1].push(tableData[i]);
+        }
     }
 
     // New map
     map = new google.maps.Map(document.getElementById('map'), options);
 
-    const marker = new google.maps.Marker({
-        position: { lat: 39, lng: -97 },
-        map: map,
-    })
+    const markers = [];
+    states.forEach(state => {
+        markers.push(new google.maps.Marker({
+            position: { lat: Number(state[3]), lng: Number(state[4]) },
+            map: map,
+        }));
+    });
 
-    const infowindow = new google.maps.InfoWindow({
-        content: DJANGO_STATIC_URL,
-    });
-    
-    google.maps.event.addListener(marker, "click", () => {
-        infowindow.open(map, marker);
-    });
+    markers.forEach((marker, i) => {
+        const infowindow = new google.maps.InfoWindow({
+            content: `<p><b>${states[i][0]}</b></p><p>Confiremd: ${states[i][1]}</p>\n<p>Deaths: ${states[i][2]}</p>`,
+        });
+
+        google.maps.event.addListener(marker, "click", () => {
+            infowindow.open(map, marker);
+        });
+    })
 }
+
+function moveTo(pos) {
+      map.setZoom(6);
+      map.panTo({ lat: pos[0], lng: pos[1] });
+}
+
+$('#covid-table tbody tr').click(function (){
+    moveTo([Number($(this).children()[3].innerHTML), Number($(this).children()[4].innerHTML)]);
+});

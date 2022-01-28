@@ -1,9 +1,6 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
-
-
-
 STATES = (
     ('AL', 'Alabama'),
     ('AK', 'Alaska'),
@@ -58,9 +55,6 @@ STATES = (
 )
 
 # Create your models here.
-class CustomUser(AbstractUser):
-    state = models.CharField(max_length=2, choices=STATES)
-
 class Strategy(models.Model):
     name = models.CharField(max_length=100)
     rating = models.CharField(max_length=50)
@@ -80,9 +74,15 @@ class State(models.Model):
     lat = models.CharField(max_length = 10)
     long = models.CharField(max_length = 10)
 
+    def __str__(self):
+        return f"{self.name}"
+
+class CustomUser(AbstractUser):
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True)
+
 class Photo(models.Model):
     url = models.CharField(max_length=200)
     strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Photo for strategy_id: {self.strategy_id} @{self.url}"
+        return f"Photo for strategy_id: {self.strategy} @{self.url}"

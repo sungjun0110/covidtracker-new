@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<table class="center align">
+
+    {% for strategy in strategies %}
+    <div class="card">
+        <div class="card-content">
+            <a href="{% url 'strategies_detail' strategy.id %}" class="teal-text center align">
+                Name: {{ strategy.name }}</a>
+        </div>
+    </div>
+    {% endfor %}
+
+</table> 
+
+
+{% endblock %} 

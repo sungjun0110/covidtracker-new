@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Kit List</h1>
+{{kits}}
+{% for kit in kits %}
+<p>Date Created: {{kit.date}}</p>
+
+<a href="{% url 'kits_detail' kit.id %}"></a>
+{% endfor %}
+
+{% endblock %} 

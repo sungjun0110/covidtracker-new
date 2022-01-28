@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covidtracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+<body>
+    <header class="navbar-fixed">
+        <nav>
+            <div class="nav-wrapper">
+                <ul>
+                    <li><a href="{% url 'home' %}" class="left brand-logo">Covidtracker</a></li>
+                </ul>
+                <ul class="right">
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'kits_index' %}">View Kits</a></li>
+                        <li><a href="{% url 'kits_create' %}">Create A Kit</a></li>
+                        <li><a href="{% url 'strategies_index' %}">View Strategies</a></li>
+                        <li><a href="{% url 'strategies_create' %}">Create a Strategy</a></li>
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Log In</a></li>
+                        <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html> 
